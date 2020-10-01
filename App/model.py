@@ -198,11 +198,13 @@ def getCrimesByRangeCode(analyzer, initialDate, offensecode):
         if numoffenses is not None:
             return m.size(me.getValue(numoffenses)['lstoffenses'])
         return 0
- 
 
 def getCrimesByDate(analyzer, Date):
-    Crimedate= om.get(analyzer['dateIndex'], Date)      
-
+    Crimedate= om.get(analyzer['dateIndex'], Date)
+    # offensecode= om.get(analyzer['offenses', ])
+    # ofensas=getCrimesByRangeCode(analyzer, Crimedate, offensecode)
+        
+    
     return Crimedate
 
 
