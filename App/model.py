@@ -201,9 +201,7 @@ def getCrimesByRangeCode(analyzer, initialDate, offensecode):
  
 
 def getCrimesByDate(analyzer, Date):
-    Crimedate= om.get(analyzer['dateIndex'], Date)
-    offenses=om.keySet(Crimedate)
-      
+    Crimedate= om.get(analyzer['dateIndex'], Date)      
 
     return Crimedate
 
