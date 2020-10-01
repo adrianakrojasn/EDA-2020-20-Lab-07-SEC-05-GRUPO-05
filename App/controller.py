@@ -50,11 +50,7 @@ def loadData(analyzer, crimesfile, offensesFile):
         model.newOffenseEntry(offense, crime)
     
     return analyzer
-    
-# def loadOffenses(analyzer, offensesFile):
-    
 
-#     return analyzer
 
 # ___________________________________________________
 #  Funciones para consultas
