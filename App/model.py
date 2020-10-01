@@ -198,7 +198,6 @@ def getCrimesByRangeCode(analyzer, initialDate, offensecode):
         if numoffenses is not None:
             return m.size(me.getValue(numoffenses)['lstoffenses'])
         return 0
- 
 
 def getCrimesByDate(analyzer, Date):
       
