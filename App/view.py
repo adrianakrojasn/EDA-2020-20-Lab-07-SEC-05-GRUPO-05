@@ -88,8 +88,8 @@ while True:
         Date = input("Fecha a buscar (YYYY-MM-DD): ")
         
         lst = controller.getCrimesByDate(cont, Date)
-        
-        
+        print(str(Date))
+         
         print("\nTotal de llaves en la fecha " + str(lt.size(lst))) 
 
     elif int(inputs[0]) == 4:
