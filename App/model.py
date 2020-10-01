@@ -207,8 +207,9 @@ def getCrimesByDate(analyzer, Date):
         offensemap = me.getValue(crimedate)['offenseIndex']
         numoffenses = m.get(offensemap,'lstoffenses')
         if numoffenses is not None: 
-            return 
-    return crimedate
+            return crimedate, m.size(me.getValue(numoffenses['lstoffenses']))
+        else:
+            return 0
 
 
 
