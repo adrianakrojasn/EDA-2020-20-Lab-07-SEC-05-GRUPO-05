@@ -31,7 +31,7 @@ def init():
 #  de datos en los modelos
 # ___________________________________________________
 
-def loadData(analyzer, crimesfile):
+def loadData(analyzer, crimesfile, offensesFile):
     """
     Carga los datos de los archivos CSV en el modelo
     """
@@ -41,9 +41,6 @@ def loadData(analyzer, crimesfile):
     for crime in input_file:
         model.addCrime(analyzer, crime)
 
-    return analyzer
-    
-def loadOffenses(analyzer, offensesFile):
     crime=analyzer['crimes']
     offenses= lt.newList('SINGLE_LINKED', cmpfunction=None)
     offensesFile = cf.data_dir + offensesFile
@@ -51,8 +48,13 @@ def loadOffenses(analyzer, offensesFile):
                                 delimiter=",")
     for offense in input_file:
         model.newOffenseEntry(offense, crime)
-
+    
     return analyzer
+    
+# def loadOffenses(analyzer, offensesFile):
+    
+
+#     return analyzer
 
 # ___________________________________________________
 #  Funciones para consultas
@@ -121,3 +123,4 @@ def getCrimesByDate(analyzer, Date):
     """
     Date= datetime.datetime.strptime(Date, '%Y-%m-%d')
     return model.getCrimesByDate(analyzer, Date.date())
+

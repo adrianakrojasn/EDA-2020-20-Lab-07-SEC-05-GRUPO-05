@@ -72,13 +72,15 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("\nCargando información de crimenes y ofensas....")
-        controller.loadData(cont, crimefile)
-        controller.loadOffenses(cont, offensesFile)
+        controller.loadData(cont, crimefile, offensesFile)
+        
         print('Crimenes cargados: ' + str(controller.crimesSize(cont)))
         print('Altura del arbol: ' + str(controller.indexHeight(cont)))
         print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
         print('Menor Llave: ' + str(controller.minKey(cont)))
         print('Mayor Llave: ' + str(controller.maxKey(cont)))
+        
+        
 
     elif int(inputs[0]) == 3:
         print("\nBuscando crimenes en una fecha: ")

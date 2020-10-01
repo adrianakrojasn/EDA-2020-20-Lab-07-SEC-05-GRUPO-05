@@ -54,6 +54,8 @@ def newAnalyzer():
     analyzer['dateIndex'] = om.newMap(omaptype='BST',
                                       comparefunction=compareDates)
     analyzer['offenses']=lt.newList('SINGLE_LINKED', compareIds)
+
+
     return analyzer
 
 
@@ -199,6 +201,8 @@ def getCrimesByRangeCode(analyzer, initialDate, offensecode):
 
 def getCrimesByDate(analyzer, Date):
     Crimedate= om.get(analyzer['dateIndex'], Date)
+    # offensecode= om.get(analyzer['offenses', ])
+    # ofensas=getCrimesByRangeCode(analyzer, Crimedate, offensecode)
         
     
     return Crimedate
