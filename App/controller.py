@@ -47,9 +47,14 @@ def loadData(analyzer, crimesfile, offensesFile):
     input_file = csv.DictReader(open(offensesFile, encoding="utf-8-sig"),
                                 delimiter=",")
     for offense in input_file:
-        model.newOffenseEntry(offense, crime)
+        model.addOffense(analyzer, offense)
+
+
     
     return analyzer
+
+
+
 
 
 # ___________________________________________________
