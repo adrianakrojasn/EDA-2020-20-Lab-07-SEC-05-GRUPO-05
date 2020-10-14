@@ -25,6 +25,7 @@ import config
 from DISClib.ADT import list as lt
 from App import controller
 assert config
+from time import process_time 
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -38,8 +39,9 @@ operación seleccionada.
 # ___________________________________________________
 
 
-crimefile = 'crime-utf-8.csv'
-offensesFile='offense_codes-utf-8.csv'
+
+accidentsFile='US_Accidents_June20_small.csv'
+
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -50,7 +52,7 @@ def printMenu():
     print("*******************************************")
     print("Bienvenido")
     print("1- Inicializar Analizador")
-    print("2- Cargar información de accidentes")
+    print("2- Cargar información de accidentes...")
     print("3- Requerimento 1")
     print("4- Requerimento 2")
     print("0- Salir")
@@ -72,9 +74,9 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("\nCargando información de crimenes y ofensas....")
-        controller.loadData(cont, crimefile, offensesFile)
+        controller.loadData(cont, accidentsFile)
         
-        print('Crimenes cargados: ' + str(controller.crimesSize(cont)))
+        print('Crimenes cargados: ' + str(controller.AccidentsSize(cont)))
         print('Altura del arbol: ' + str(controller.indexHeight(cont)))
         print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
         print('Menor Llave: ' + str(controller.minKey(cont)))
@@ -84,13 +86,15 @@ while True:
 
     elif int(inputs[0]) == 3:
         print("\nBuscando crimenes en una fecha: ")
-        
+        t1_start = process_time()
         Date = input("Fecha a buscar (YYYY-MM-DD): ")
-        
-        lst = controller.getCrimesByDate(cont, Date)
+        lst = controller.getAccidentsByDate(cont, Date)
         print(str(Date))
+        # print(lst)
          
         print("\nTotal de llaves en la fecha " + str(lt.size(lst))) 
+        t1_stop = process_time() #tiempo final
+        print("Tiempo de ejecución ",t1_stop-t1_start," segundos") 
 
     elif int(inputs[0]) == 4:
         print("\nRequerimiento No 1 del reto 3: ")

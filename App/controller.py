@@ -4,6 +4,7 @@ import datetime
 import csv
 from DISClib.ADT import orderedmap as om
 from DISClib.ADT import list as lt
+from time import process_time 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
 Existen algunas operaciones en las que se necesita invocar
@@ -31,29 +32,21 @@ def init():
 #  de datos en los modelos
 # ___________________________________________________
 
-def loadData(analyzer, crimesfile, offensesFile):
+
+
+def loadData(analyzer, accidentsfile):
+    t1_start = process_time()
     """
     Carga los datos de los archivos CSV en el modelo
     """
-    crimesfile = cf.data_dir + crimesfile
-    input_file = csv.DictReader(open(crimesfile, encoding="utf-8-sig"),
+    accidentsfile = cf.data_dir + accidentsfile
+    input_file = csv.DictReader(open(accidentsfile, encoding="utf-8-sig"),
                                 delimiter=",")
-    for crime in input_file:
-        model.addCrime(analyzer, crime)
-
-    crime=analyzer['crimes']
-    offenses= lt.newList('SINGLE_LINKED', cmpfunction=None)
-    offensesFile = cf.data_dir + offensesFile
-    input_file = csv.DictReader(open(offensesFile, encoding="utf-8-sig"),
-                                delimiter=",")
-    for offense in input_file:
-        model.addOffense(analyzer, offense)
-
-
-    
+    for accident in input_file:
+        model.addAccident(analyzer, accident)
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de ejecución ",t1_stop-t1_start," segundos") 
     return analyzer
-
-
 
 
 
@@ -62,11 +55,11 @@ def loadData(analyzer, crimesfile, offensesFile):
 # ___________________________________________________
 
 
-def crimesSize(analyzer):
+def AccidentsSize(analyzer):
     """
     Numero de crimenes leidos
     """
-    return model.crimesSize(analyzer)
+    return model.AccidentsSize(analyzer)
 
 
 def indexHeight(analyzer):
@@ -97,31 +90,31 @@ def maxKey(analyzer):
     return model.maxKey(analyzer)
 
 
-def getCrimesByRange(analyzer, initialDate, finalDate):
+def getAccidentsByRange(analyzer, initialDate, finalDate):
     """
     Retorna el total de crimenes en un rango de fechas
     """
     initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
     finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
-    return model.getCrimesByRange(analyzer, initialDate.date(),
+    return model.getAccidentsByRange(analyzer, initialDate.date(),
                                   finalDate.date())
 
 
-def getCrimesByRangeCode(analyzer, initialDate,
-                         offensecode):
-    """
-    Retorna el total de crimenes de un tipo especifico en una
-    fecha determinada
-    """
-    initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
-    return model.getCrimesByRangeCode(analyzer, initialDate.date(),
-                                      offensecode)
+# def getAccidentsByRangeCode(analyzer, initialDate,
+#                          severity):
+#     """
+#     Retorna el total de crimenes de un tipo especifico en una
+#     fecha determinada
+#     """
+#     initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
+#     return model.getAccidentsByRangeCode(analyzer, initialDate.date(),
+#                                       offensecode)
 
 
-def getCrimesByDate(analyzer, Date):
+def getAccidentsByDate(analyzer, Date):
     """
     Retorna el total de crimenes en un rango de fechas
     """
     Date= datetime.datetime.strptime(Date, '%Y-%m-%d')
-    return model.getCrimesByDate(analyzer, Date.date())
+    return model.getAccidentsByDate(analyzer, Date.date())
 

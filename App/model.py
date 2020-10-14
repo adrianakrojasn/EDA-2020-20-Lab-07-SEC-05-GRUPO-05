@@ -46,15 +46,14 @@ def newAnalyzer():
 
     Retorna el analizador inicializado.
     """
-    analyzer = {'crimes': None,
+    analyzer = {'accidents': None,
                 'dateIndex': None
                 }
 
-    analyzer['crimes'] = lt.newList('SINGLE_LINKED', compareIds)
+    analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
     analyzer['dateIndex'] = om.newMap(omaptype='BST',
                                       comparefunction=compareDates)
-    analyzer['offenses']=lt.newList('SINGLE_LINKED', compareIds)
-
+    
 
     return analyzer
 
@@ -62,20 +61,15 @@ def newAnalyzer():
 # Funciones para agregar informacion al catalogo
 
 
-def addCrime(analyzer, crime):
+def addAccident(analyzer, accident):
     """
     """
-    lt.addLast(analyzer['crimes'], crime)
-    updateDateIndex(analyzer['dateIndex'], crime)
+    lt.addLast(analyzer['accidents'], accident)
+    updateDateIndex(analyzer['dateIndex'], accident)
     return analyzer
 
-def addOffense(analyzer, offense):
-    lt.addLast(analyzer['offenses'], offense)
-    
-    return  analyzer
 
-
-def updateDateIndex(map, crime):
+def updateDateIndex(map, accident):
     """
     Se toma la fecha del crimen y se busca si ya existe en el arbol
     dicha fecha.  Si es asi, se adiciona a su lista de crimenes
@@ -84,74 +78,69 @@ def updateDateIndex(map, crime):
     Si no se encuentra creado un nodo para esa fecha en el arbol
     se crea y se actualiza el indice de tipos de crimenes
     """
-    occurreddate = crime['OCCURRED_ON_DATE']
-    crimedate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
-    entry = om.get(map, crimedate.date())
+    occurreddate = accident['Start_Time']
+    accidentdate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
+    entry = om.get(map, accidentdate.date())
     if entry is None:
-        datentry = newDataEntry(crime)
-        om.put(map, crimedate.date(), datentry)
+        datentry = newDataEntry(accident)
+        om.put(map, accidentdate.date(), datentry)
     else:
         datentry = me.getValue(entry)
-    addDateIndex(datentry, crime)
+    addDateIndex(datentry, accident)
     return map
 
 
-def addDateIndex(datentry, crime):
+def addDateIndex(dateentry, accident):
     """
     Actualiza un indice de tipo de crimenes.  Este indice tiene una lista
     de crimenes y una tabla de hash cuya llave es el tipo de crimen y
     el valor es una lista con los crimenes de dicho tipo en la fecha que
     se está consultando (dada por el nodo del arbol)
     """
-    lst = datentry['lstcrimes']
-    lt.addLast(lst, crime)
-    offenseIndex = datentry['offenseIndex']
-    offentry = m.get(offenseIndex, crime['OFFENSE_CODE_GROUP'])
-    if (offentry is None):
-        entry = newOffenseEntry(crime['OFFENSE_CODE_GROUP'], crime)
-        lt.addLast(entry['lstoffenses'], crime)
-        m.put(offenseIndex, crime['OFFENSE_CODE_GROUP'], entry)
+    lst = dateentry['lstaccidents']
+    lt.addLast(lst, accident)
+    severityIndex= dateentry['dateIndex']
+    severity=  m.get(severityIndex, accident['Severity'])
+    if (severity is None):
+        entry = newSeverityEntry(accident['Severity'], accident)
+        lt.addLast(entry['lstseverity'], accident)
+        m.put(severityIndex, accident['Severity'], entry)
     else:
-        entry = me.getValue(offentry)
-        lt.addLast(entry['lstoffenses'], crime)
-    return datentry
+        entry = me.getValue(severity)
+        lt.addLast(entry['lstseverity'], accident)
+    return dateentry
 
 
-def newDataEntry(crime):
+def newDataEntry(accident):
     """
     Crea una entrada en el indice por fechas, es decir en el arbol
     binario.
     """
-    entry = {'offenseIndex': None, 'lstcrimes': None}
-    entry['offenseIndex'] = m.newMap(numelements=30,
+    entry = {'dateIndex': None, 'lstaccidents': None}
+    entry['dateIndex'] = m.newMap(numelements=30,
                                      maptype='PROBING',
-                                     comparefunction=compareOffenses)
-    entry['lstcrimes'] = lt.newList('SINGLE_LINKED', compareDates)
+                                     comparefunction=compareseverity)
+    entry['lstaccidents'] = lt.newList('SINGLE_LINKED', compareDates)
     return entry
 
+def newSeverityEntry(severity, accident):
+    severityentry= {'severity':None, 'lstseverity':None}
+    severityentry['severity']= severity
+    severityentry['lstseverity']=lt.newList('SINGLELINKED', compareseverity)
+    return severityentry
 
-def newOffenseEntry(offensegrp, crime):
-    """
-    Crea una entrada en el indice por tipo de crimen, es decir en
-    la tabla de hash, que se encuentra en cada nodo del arbol.
-    """
-    ofentry = {'offense': None, 'lstoffenses': None}
-    ofentry['offense'] = offensegrp
-    ofentry['lstoffenses'] = lt.newList('SINGLELINKED', compareOffenses)
-    return ofentry
-
-
+                                    
 # Funciones para agregar informacion al catalogo
 
 
 # ==============================
 # Funciones de consulta
 # ==============================
-def crimesSize(analyzer):
+def AccidentsSize(analyzer):
     """
     Número de libros en el catago
     """
-    return lt.size(analyzer['crimes'])
+    return lt.size(analyzer['accidents'])
 
 
 def indexHeight(analyzer):
@@ -178,7 +167,7 @@ def maxKey(analyzer):
     return om.maxKey(analyzer['dateIndex'])
 
 
-def getCrimesByRange(analyzer, initialDate, finalDate):
+def getAccidentsByRange(analyzer, initialDate, finalDate):
     """
     Retorna el numero de crimenes en un rago de fechas.
     """
@@ -186,38 +175,36 @@ def getCrimesByRange(analyzer, initialDate, finalDate):
     return lst
 
 
-def getCrimesByRangeCode(analyzer, initialDate, offensecode):
+def getAccidentsByRangeCode(analyzer, initialDate, severity):
     """
     Para una fecha determinada, retorna el numero de crimenes
     de un tipo especifico.
     """
-    crimedate = om.get(analyzer['dateIndex'], initialDate)
-    if crimedate['key'] is not None:
-        offensemap = me.getValue(crimedate)['offenseIndex']
-        numoffenses = m.get(offensemap, offensecode)
+    accidentdate = om.get(analyzer['dateIndex'], initialDate)
+    if accidentdate['key'] is not None:
+        severitymap = me.getValue(accidentdate)['severityIndex']
+        numaccidents = m.get(severitymap, severity)
         if numoffenses is not None:
-            return m.size(me.getValue(numoffenses)['lstoffenses'])
+            return m.size(me.getValue(numoffenses)['lstseverity'])
         return 0
 
-def getCrimesByDate(analyzer, Date):
+def getAccidentsByDate(analyzer, Date):
     
     # offenses=om.get(analyzer['offenses'], )
-    crimedate= om.get(analyzer['dateIndex'], Date)
-    lst = om.values(analyzer['dateIndex'],Date,Date)
+    accidentdate= om.get(analyzer['dateIndex'], Date)
+    # severity= om.get(analyzer, accidentdate['key'])
+    # print(accidentdate['key'])
+    # print(serveity['Severity'])
+    # if accidentdate['key'] is not None:
+    #     severitymap=me.getValue(accidentdate)['offenseIndex']
+    #     numaccidents= m.getValue(accidentdate)['severityIndex']
     
-    
-    if crimedate['key'] is not None:
-        offense=me.getValue(crimedate)['offenseIndex']
-        # print(offense)
-        offensecode=m.keySet(offense)
-        
-        print(offensecode)
-        # if offensecode is not None: 
-        #     return (crimedate, offensecode)
-        # else:
-        #     return 0
-    
-    return(crimedate)
+    #     if numaccidents is not None: 
+    #         return m.size(me.getValue(numaccidents['lstseverity']))
+    #     else:
+    #         return 0
+    return accidentdate
+  
 
 
 # ==============================
@@ -250,15 +237,15 @@ def compareDates(date1, date2):
         return -1
 
 
-def compareOffenses(offense1, offense2):
+def compareseverity(severity1, severity2):
     """
     Compara dos ids de libros, id es un identificador
     y entry una pareja llave-valor
     """
-    offense = me.getKey(offense2)
-    if (offense1 == offense):
+    severity = me.getKey(severity2)
+    if (severity1 ==severity):
         return 0
-    elif (offense1 > offense):
+    elif (severity1 > severity):
         return 1
     else:
         return -1
