@@ -40,7 +40,7 @@ operación seleccionada.
 
 
 
-accidentsFile='US_Accidents_June20.csv'
+accidentsFile='US_Accidents_June20_small.csv'
 
 # ___________________________________________________
 #  Menu principal
@@ -88,9 +88,9 @@ while True:
         print("\nBuscando crimenes en una fecha: ")
         t1_start = process_time()
         Date = input("Fecha a buscar (YYYY-MM-DD): ")
-        lst = controller.getAccidentsByDate(cont, Date)
+        lst = controller.getAccidentsBySeverity(cont, Date)
         print(str(Date))
-        # print(lst)
+        # print(lst['type'])
          
         print("\nTotal de llaves en la fecha " + str(lt.size(lst))) 
         t1_stop = process_time() #tiempo final

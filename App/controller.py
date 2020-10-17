@@ -44,6 +44,7 @@ def loadData(analyzer, accidentsfile):
                                 delimiter=",")
     for accident in input_file:
         model.addAccident(analyzer, accident)
+        
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos") 
     return analyzer
@@ -100,18 +101,18 @@ def getAccidentsByRange(analyzer, initialDate, finalDate):
                                   finalDate.date())
 
 
-# def getAccidentsByRangeCode(analyzer, initialDate,
-#                          severity):
-#     """
-#     Retorna el total de crimenes de un tipo especifico en una
-#     fecha determinada
-#     """
-#     initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
-#     return model.getAccidentsByRangeCode(analyzer, initialDate.date(),
-#                                       offensecode)
+def getAccidentsByRangeCode(analyzer, initialDate,
+                         severity):
+    """
+    Retorna el total de crimenes de un tipo especifico en una
+    fecha determinada
+    """
+    initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
+    return model.getAccidentsByRangeCode(analyzer, initialDate.date(),
+                                      offensecode)
 
 
-def getAccidentsByDate(analyzer, Date):
+def getAccidentsBySeverity(analyzer, Date):
     """
     Retorna el total de crimenes en un rango de fechas
     """

@@ -53,11 +53,9 @@ def newAnalyzer():
     analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
     analyzer['dateIndex'] = om.newMap(omaptype='RBT',
                                       comparefunction=compareDates)
-    
+                                      
 
     return analyzer
-
-
 # Funciones para agregar informacion al catalogo
 
 
@@ -182,29 +180,28 @@ def getAccidentsByRangeCode(analyzer, initialDate, severity):
     """
     accidentdate = om.get(analyzer['dateIndex'], initialDate)
     if accidentdate['key'] is not None:
-        severitymap = me.getValue(accidentdate)['severityIndex']
+        severitymap = me.getValue(accidentdate)['severity']
         numaccidents = m.get(severitymap, severity)
         if numoffenses is not None:
             return m.size(me.getValue(numoffenses)['lstseverity'])
         return 0
 
-def getAccidentsByDate(analyzer, Date):
-    
-    # offenses=om.get(analyzer['offenses'], )
-    accidentdate= om.get(analyzer['dateIndex'], Date)
-    # severity= om.get(analyzer, accidentdate['key'])
-    # print(accidentdate['key'])
-    # print(serveity['Severity'])
-    # if accidentdate['key'] is not None:
-    #     severitymap=me.getValue(accidentdate)['offenseIndex']
-    #     numaccidents= m.getValue(accidentdate)['severityIndex']
-    
-    #     if numaccidents is not None: 
-    #         return m.size(me.getValue(numaccidents['lstseverity']))
-    #     else:
-    #         return 0
-    return accidentdate
-  
+def getAccidentsBySeverity(analyzer, Date):
+
+    severityCodes=lt.newList(datastructure="SINGLE_LINKED", cmpfunction=None)
+    lt.addLast(severityCodes, 1)
+    lt.addLast(severityCodes, 2)
+    lt.addLast(severityCodes, 3)
+    lt.addLast(severityCodes, 4)
+
+    accidents=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=None)
+
+    for severityCode in severityCodes:
+        severity= getAccidentsByRangeCode(analyzer, Date, severityCode)
+        lt.addLast(accidents,severity)
+
+    return(accidents)
+   
 
 
 # ==============================
