@@ -54,11 +54,9 @@ def newAnalyzer():
     analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
     analyzer['dateIndex'] = om.newMap(omaptype='BST',
                                       comparefunction=compareDates)
-    
+                                      
 
     return analyzer
-
-
 # Funciones para agregar informacion al catalogo
 
 
@@ -183,12 +181,13 @@ def getAccidentsByRangeCode(analyzer, initialDate, severity):
     """
     accidentdate = om.get(analyzer['dateIndex'], initialDate)
     if accidentdate['key'] is not None:
-        severitymap = me.getValue(accidentdate)['severityIndex']
+        severitymap = me.getValue(accidentdate)['severity']
         numaccidents = m.get(severitymap, severity)
         if numaccidents is not None:
             return m.size(me.getValue(numaccidents)['lstseverity'])
         return 0
 
+<<<<<<< HEAD
 def getAccidentsByDate(analyzer, Date):
     
     # offenses=om.get(analyzer['offenses'], )
@@ -234,6 +233,24 @@ def getAccidentsByState(analyzer,initialDate,finalDate):
     #Paso 3: Encontrar el valor mayor 
     #Paso 4: Buscar la lista más grande de accidentes->fecha 
     #Paso 5: Retornar el valor mayor del histograma y la fecha 
+=======
+def getAccidentsBySeverity(analyzer, Date):
+
+    severityCodes=lt.newList(datastructure="SINGLE_LINKED", cmpfunction=None)
+    lt.addLast(severityCodes, 1)
+    lt.addLast(severityCodes, 2)
+    lt.addLast(severityCodes, 3)
+    lt.addLast(severityCodes, 4)
+
+    accidents=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=None)
+
+    for severityCode in severityCodes:
+        severity= getAccidentsByRangeCode(analyzer, Date, severityCode)
+        lt.addLast(accidents,severity)
+
+    return(accidents)
+   
+>>>>>>> 5026b7f6f1b80225ba3acdbb1f41016d52060f44
 
 
 # ==============================
