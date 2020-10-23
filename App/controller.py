@@ -117,5 +117,5 @@ def getAccidentsBySeverity(analyzer, Date):
     Retorna el total de crimenes en un rango de fechas
     """
     Date= datetime.datetime.strptime(Date, '%Y-%m-%d')
-    return model.getAccidentsByDate(analyzer, Date.date())
+    return model.getAccidentsBySeverity(analyzer, Date.date())
 

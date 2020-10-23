@@ -122,8 +122,8 @@ def newDataEntry(accident):
     return entry
 
 def newSeverityEntry(severity, accident):
-    severityentry= {'severity':None, 'lstseverity':None}
-    severityentry['severity']= severity
+    severityentry= {'Severity':None, 'lstseverity':None}
+    severityentry['Severity']= severity
     severityentry['lstseverity']=lt.newList('SINGLELINKED', compareseverity)
     return severityentry
 
@@ -180,7 +180,8 @@ def getAccidentsByRangeCode(analyzer, initialDate, severity):
     """
     accidentdate = om.get(analyzer['dateIndex'], initialDate)
     if accidentdate['key'] is not None:
-        severitymap = me.getValue(accidentdate)['severity']
+        print(accidentdate)
+        severitymap = me.getValue(accidentdate)['Severity']
         numaccidents = m.get(severitymap, severity)
         if numoffenses is not None:
             return m.size(me.getValue(numoffenses)['lstseverity'])
