@@ -40,7 +40,7 @@ operación seleccionada.
 
 
 
-accidentsFile='US_Accidents_June20_2016.csv'
+accidentsFile='US_Accidents_Dec19.csv'
 
 # ___________________________________________________
 #  Menu principal

@@ -24,6 +24,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
+from DISClib.DataStructures import linkedlistiterator as lit
 import datetime
 assert config
 
@@ -51,7 +52,7 @@ def newAnalyzer():
                 }
 
     analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
-    analyzer['dateIndex'] = om.newMap(omaptype='RBT',
+    analyzer['dateIndex'] = om.newMap(omaptype='BST',
                                       comparefunction=compareDates)
     
 
@@ -184,8 +185,8 @@ def getAccidentsByRangeCode(analyzer, initialDate, severity):
     if accidentdate['key'] is not None:
         severitymap = me.getValue(accidentdate)['severityIndex']
         numaccidents = m.get(severitymap, severity)
-        if numoffenses is not None:
-            return m.size(me.getValue(numoffenses)['lstseverity'])
+        if numaccidents is not None:
+            return m.size(me.getValue(numaccidents)['lstseverity'])
         return 0
 
 def getAccidentsByDate(analyzer, Date):
@@ -204,7 +205,35 @@ def getAccidentsByDate(analyzer, Date):
     #     else:
     #         return 0
     return accidentdate
-  
+
+def getAccidentsByState(analyzer,initialDate,finalDate):
+    lst_rank= lt.newList(datastructure='SINGLE_LINKED',cmpfunction=None)
+    lst_keys= lt.newList(datastructure= 'SINGLE_LINKED',cmpfunction=None)
+    rango = getAccidentsByRange(analyzer['dateIndex'],initialDate,finalDate)
+    lt.addLast(lst_rank,rango)
+    histograma = m.newMap(numelements=1000,prime=109345121,maptype='CHAINING',loadfactor=0.5,comparefunction=compareaccidents)
+    iter = lit.newIterator(lst_rank)
+    while lit.hasNext(iter):
+        entry = lit.next(iter)
+        if entry['State'] not in histograma:
+            entry['State'] = 1
+        else:
+            entry['State'] += 1
+    maximo = max(m.valueSet(lst_rank))
+    keys = m.keySet(lst_rank)
+    lt.addLast(lst_keys,keys)
+    iter = lit.newIterator(lst_keys)
+    while lit.hasNext(iter):
+        key = lit.next(iter)
+        if key == maximo:
+            return maximo
+        else: 
+            return 0
+    #Paso 1: completar la lista 
+    #Paso 2: Crear un histograma(mapa)-> k:estados v:#accidentes
+    #Paso 3: Encontrar el valor mayor 
+    #Paso 4: Buscar la lista más grande de accidentes->fecha 
+    #Paso 5: Retornar el valor mayor del histograma y la fecha 
 
 
 # ==============================
@@ -249,4 +278,18 @@ def compareseverity(severity1, severity2):
         return 1
     else:
         return -1
+    
+def compareaccidents(accident1, accident2):
+    """
+    Compara dos ids de libros, id es un identificador
+    y entry una pareja llave-valor
+    """
+    accident = me.getKey(accident2)
+    if (accident1 ==accident):
+        return 0
+    elif (accident1 > accident):
+        return 1
+    else:
+        return -1
+
 
