@@ -40,7 +40,11 @@ operación seleccionada.
 
 
 
+<<<<<<< HEAD
+accidentsFile='US_Accidents_Dec19.csv'
+=======
 accidentsFile='US_Accidents_June20_small.csv'
+>>>>>>> 5026b7f6f1b80225ba3acdbb1f41016d52060f44
 
 # ___________________________________________________
 #  Menu principal
