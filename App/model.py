@@ -186,6 +186,25 @@ def getAccidentsByRangeCode(analyzer, initialDate, severity):
             return m.size(me.getValue(numoffenses)['lstseverity'])
         return (numoffenses)
 
+def getAccidentsBeforeDate(analyzer, FinallDate): #requerimiento3
+    """
+    Retorna los accidentes ocrridos antes de una fecha
+    """
+    lst_keys= lt.newList(datastructure= 'SINGLE_LINKED',cmpfunction=None)
+    accident=om.values(analyzer["dateIndex"],0, FinallDate)
+    if accident["key"] is not none:
+        if accident["key"] < FinalDate:
+            lt.addLast(accident)
+        
+     
+    mayor = max(m.valueSet(accident))
+    fecha=  datetime.datetime.strptime(mayor, '%Y-%m-%d')
+        
+    
+    return accident, fecha
+    
+
+    
 
 def getAccidentsByState(analyzer,initialDate,finalDate): #REQUERIMIENTO 4
     lst_rank= lt.newList(datastructure='SINGLE_LINKED',cmpfunction=None)
@@ -230,8 +249,7 @@ def getAccidentsBySeverity(analyzer, date): #REQUERIMIENTO 1
         severidad2=0
     if severidad3==None:
         severidad3=0
-    if severidad4==None:
-        severidad4=0
+|        severidad4=0
 
     TotalAccidentes=severidad1+severidad2+severidad3+severidad4
     print("\nFECHA: " + str(date))
