@@ -24,6 +24,8 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
+from DISClib.DataStructures import linkedlistiterator as lit
+from DISClib.DataStructures import listiterator as it
 import datetime
 assert config
 
@@ -51,7 +53,7 @@ def newAnalyzer():
                 }
 
     analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
-    analyzer['dateIndex'] = om.newMap(omaptype='RBT',
+    analyzer['dateIndex'] = om.newMap(omaptype='BST',
                                       comparefunction=compareDates)
                                       
 
@@ -88,16 +90,16 @@ def updateDateIndex(map, accident):
     return map
 
 
-def addDateIndex(dateentry, accident):
+def addDateIndex(datentry, accident):
     """
     Actualiza un indice de tipo de crimenes.  Este indice tiene una lista
     de crimenes y una tabla de hash cuya llave es el tipo de crimen y
     el valor es una lista con los crimenes de dicho tipo en la fecha que
     se está consultando (dada por el nodo del arbol)
     """
-    lst = dateentry['lstaccidents']
+    lst = datentry['lstaccidents']
     lt.addLast(lst, accident)
-    severityIndex= dateentry['dateIndex']
+    severityIndex= datentry['severityIndex']
     severity=  m.get(severityIndex, accident['Severity'])
     if (severity is None):
         entry = newSeverityEntry(accident['Severity'], accident)
@@ -106,7 +108,7 @@ def addDateIndex(dateentry, accident):
     else:
         entry = me.getValue(severity)
         lt.addLast(entry['lstseverity'], accident)
-    return dateentry
+    return datentry
 
 
 def newDataEntry(accident):
@@ -114,8 +116,8 @@ def newDataEntry(accident):
     Crea una entrada en el indice por fechas, es decir en el arbol
     binario.
     """
-    entry = {'dateIndex': None, 'lstaccidents': None}
-    entry['dateIndex'] = m.newMap(numelements=30,
+    entry = {'severityIndex': None, 'lstaccidents': None}
+    entry['severityIndex'] = m.newMap(numelements=30,
                                      maptype='PROBING',
                                      comparefunction=compareseverity)
     entry['lstaccidents'] = lt.newList('SINGLE_LINKED', compareDates)
@@ -128,8 +130,6 @@ def newSeverityEntry(severity, accident):
     return severityentry
 
                                     
-# Funciones para agregar informacion al catalogo
-
 
 # ==============================
 # Funciones de consulta
@@ -180,30 +180,91 @@ def getAccidentsByRangeCode(analyzer, initialDate, severity):
     """
     accidentdate = om.get(analyzer['dateIndex'], initialDate)
     if accidentdate['key'] is not None:
-        severitymap = me.getValue(accidentdate)['severity']
-        numaccidents = m.get(severitymap, severity)
+        severitymap = me.getValue(accidentdate)['severityIndex']
+        numoffenses = m.get(severitymap, severity)
         if numoffenses is not None:
             return m.size(me.getValue(numoffenses)['lstseverity'])
-        return 0
-
-def getAccidentsBySeverity(analyzer, Date):
-
-    severityCodes=lt.newList(datastructure="SINGLE_LINKED", cmpfunction=None)
-    lt.addLast(severityCodes, 1)
-    lt.addLast(severityCodes, 2)
-    lt.addLast(severityCodes, 3)
-    lt.addLast(severityCodes, 4)
-
-    accidents=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=None)
-
-    for severityCode in severityCodes:
-        severity= getAccidentsByRangeCode(analyzer, Date, severityCode)
-        lt.addLast(accidents,severity)
-
-    return(accidents)
-   
+        return (numoffenses)
 
 
+def getAccidentsByState(analyzer,initialDate,finalDate): #REQUERIMIENTO 4
+    lst_rank= lt.newList(datastructure='SINGLE_LINKED',cmpfunction=None)
+    lst_keys= lt.newList(datastructure= 'SINGLE_LINKED',cmpfunction=None)
+    rango = getAccidentsByRange(analyzer['dateIndex'],initialDate,finalDate)
+    lt.addLast(lst_rank,rango)
+    histograma = m.newMap(numelements=1000,prime=109345121,maptype='CHAINING',loadfactor=0.5,comparefunction=compareaccidents)
+    iter = lit.newIterator(lst_rank)
+    while lit.hasNext(iter):
+        entry = lit.next(iter)
+        if entry['State'] not in histograma:
+            entry['State'] = 1
+        else:
+            entry['State'] += 1
+    maximo = max(m.valueSet(lst_rank))
+    keys = m.keySet(lst_rank)
+    lt.addLast(lst_keys,keys)
+    iter = lit.newIterator(lst_keys)
+    while lit.hasNext(iter):
+        key = lit.next(iter)
+        if key == maximo:
+            return maximo
+        else: 
+            return 0
+    #Paso 1: completar la lista 
+    #Paso 2: Crear un histograma(mapa)-> k:estados v:#accidentes
+    #Paso 3: Encontrar el valor mayor 
+    #Paso 4: Buscar la lista más grande de accidentes->fecha 
+    #Paso 5: Retornar el valor mayor del histograma y la fecha 
+
+def getAccidentsBySeverity(analyzer, date): #REQUERIMIENTO 1 
+
+    accidentdate = om.get(analyzer['dateIndex'], date)
+    severidad1=getAccidentsByRangeCode(analyzer, date, "1")
+    severidad2=getAccidentsByRangeCode(analyzer, date, "2")
+    severidad3=getAccidentsByRangeCode(analyzer, date, "3")
+    severidad4=getAccidentsByRangeCode(analyzer, date, "4")
+
+    if severidad1==None:
+        severidad1=0
+    if severidad2==None:
+        severidad2=0
+    if severidad3==None:
+        severidad3=0
+    if severidad4==None:
+        severidad4=0
+
+    TotalAccidentes=severidad1+severidad2+severidad3+severidad4
+    print("\nFECHA: " + str(date))
+    print("SEVERIDAD"+"\t"+"NUM. ACCIDENTES")
+    print("--------------------------------------")
+    print("1"+"\t"+"\t"+str(severidad1))
+    print("2"+"\t"+"\t"+str(severidad2))
+    print("3"+"\t"+"\t"+str(severidad3))
+    print("4"+"\t"+"\t"+str(severidad4))
+    print("TOTAL DE ACCIDENTES:"+ str(TotalAccidentes))
+
+    return(accidentdate) 
+
+        
+def getAccidentsByRangeSeverity(analyzer, initialDate, finalDate): #REQUERIMIENTO 3
+    accidentdate=getAccidentsByRange(analyzer, initialDate, finalDate)
+    # print(type(accidentdate))
+    severidad1=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=None)    
+    
+    iter=lit.newIterator(accidentdate)
+    while lit.hasNext(iter):
+        accidente= lit.next(iter)
+        
+        
+       
+    
+    
+  
+
+    
+    
+    
+    
 # ==============================
 # Funciones de Comparacion
 # ==============================
@@ -246,4 +307,7 @@ def compareseverity(severity1, severity2):
         return 1
     else:
         return -1
+    
+
+
 

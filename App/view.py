@@ -40,6 +40,7 @@ operación seleccionada.
 
 
 
+# accidentsFile='US_Accidents_Dec19.csv'
 accidentsFile='US_Accidents_June20_small.csv'
 
 # ___________________________________________________
@@ -71,7 +72,6 @@ while True:
         # cont es el controlador que se usará de acá en adelante
         cont = controller.init()
         
-
     elif int(inputs[0]) == 2:
         print("\nCargando información de crimenes y ofensas....")
         controller.loadData(cont, accidentsFile)
@@ -80,25 +80,26 @@ while True:
         print('Altura del arbol: ' + str(controller.indexHeight(cont)))
         print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
         print('Menor Llave: ' + str(controller.minKey(cont)))
-        print('Mayor Llave: ' + str(controller.maxKey(cont)))
-        
-        
+        print('Mayor Llave: ' + str(controller.maxKey(cont)))      
 
-    elif int(inputs[0]) == 3:
+    elif int(inputs[0]) == 3: #REQUERIMIENTO 1
         print("\nBuscando crimenes en una fecha: ")
         t1_start = process_time()
         Date = input("Fecha a buscar (YYYY-MM-DD): ")
         lst = controller.getAccidentsBySeverity(cont, Date)
-        print(str(Date))
-        # print(lst['type'])
-         
         print("\nTotal de llaves en la fecha " + str(lt.size(lst))) 
         t1_stop = process_time() #tiempo final
-        print("Tiempo de ejecución ",t1_stop-t1_start," segundos") 
+        print("Tiempo de ejecución ",t1_stop-t1_start," segundos")         
+    
+    elif int(inputs[0]) == 5: #REQUERIMIENTO 3
+        initialDate= input("Rango Inicial (YYYY-MM-DD): ")
+        finalDate= input("Rango final (YYYY-MM-DD): ")
+        resp= controller.getAccidentsByRangeSeverity(cont, initialDate, finalDate)
+        
+        print(resp)
 
-    elif int(inputs[0]) == 4:
-        print("\nRequerimiento No 1 del reto 3: ")
-
+    
+        
     else:
         sys.exit(0)
 sys.exit(0)
